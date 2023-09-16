@@ -1,0 +1,42 @@
+
+- name: play1
+  hosts: webservers
+  gather_facts : false
+  tasks:
+    - name: health check
+      ping:
+      tags: always
+
+- name: play2
+  hosts: webservers
+  vars:
+        first_name: farida
+        second_name : ayman
+
+  gather_facts : false
+  tasks:  
+    - name: updating pkm
+      tags: reload
+      apt:
+       update_cache: true 
+       name: nginx
+       state: latest
+ 
+    - name: copy index file
+      tags: bootstrap
+      copy: 
+        src: ./index.html
+        dest: /var/www/html/index.html 
+       
+    - name : restarting the webserver
+      tags : bootstrap 
+      service: 
+         name: nginx
+         state: restarted 
+    - name : print my name
+      tags : bootstraps
+      vars:
+        first_name: habiba
+        second_name : ayman
+      debug: 
+         msg: "{{ first_name}}"
